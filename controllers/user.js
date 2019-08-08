@@ -23,7 +23,7 @@ module.exports.hasAuthorization = (req, res, next) => {
 }
 
 module,exports.isAdmin = (req, res, next) => {
-    // console.log(req.userProfile, "==========", req.payload)
+    // em
     if(req.userProfile && req.payload && req.userProfile._id == req.payload._id && req.userProfile.groupId.groupACP) {
         next();
     }else {

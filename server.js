@@ -9,6 +9,7 @@ const expressValidator = require("express-validator");
 const indexRoute = require("./routes/index");
 const cateRoute = require("./routes/category");
 const bookRoute = require("./routes/book");
+const chapterRoute = require("./routes/chapter");
 const groupRoute = require("./routes/group");
 const userRoute = require("./routes/user");
 
@@ -36,6 +37,7 @@ app.use(expressValidator());
 app.use("/", indexRoute);
 app.use("/category", cateRoute);
 app.use("/book", bookRoute);
+app.use("/chapter", chapterRoute);
 app.use("/group", groupRoute);
 app.use("/user", userRoute);
 

@@ -9,7 +9,7 @@ const chapterChema = new Schema({
         default: true
     },
     ordering: Number,
-    chapterNumber: Number,
+    chapterNumber: String,
     bookId: {
         type: ObjectId,
         ref: "Book"

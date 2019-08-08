@@ -81,3 +81,20 @@ module.exports.validateAddBook = (req, res, next) => {
     // Process to the next middleware
     next();
 }
+
+module.exports.validateAddChapter = (req, res, next) => {
+    req.check("content", "Content of the chapter is required").notEmpty();
+    req.check("chapterNumber", "Chapter number is required").notEmpty();
+    req.check("bookId", "Book id of the chapter is required").notEmpty();
+    // Check for error
+    const errors = req.validationErrors();
+    // If error show the first one as they happen
+    if(errors) {
+        const firstError = errors[0].msg;
+        return res.status(400).json({
+            error: firstError
+        })
+    }
+    // Process to the next middleware
+    next();
+}
