@@ -25,7 +25,34 @@ module.exports.addCategory = (req, res) => {
 }
 
 module.exports.getCategories = (req, res) => {
-    Category.find({status: true}, (err, categories) => {
+    // Category.find({status: true}, (err, categories) => {
+    //     if(err) return res.status(400).json( {error: "Can not get categories"} )
+    //     return res.status(200).json(categories)
+    // })
+
+    Category.find( {status: true}, null, { limit: 5, skip: 0},  (err, categories) => {
+        if(err) return res.status(400).json( {error: "Can not get categories"} )
+        return res.status(200).json(categories)
+    })
+
+}
+
+module.exports.getAllCategories = (req, res) => {
+    // Category.find({status: true}, (err, categories) => {
+    //     if(err) return res.status(400).json( {error: "Can not get categories"} )
+    //     return res.status(200).json(categories)
+    // })
+
+    Category.find( {status: true}, null,  (err, categories) => {
+        if(err) return res.status(400).json( {error: "Can not get categories"} )
+        return res.status(200).json(categories)
+    })
+
+}
+
+
+module.exports.getMoreCategories = async (req, res) => {
+    await Category.find( {status: true}, null, { limit: 5, skip: req.body.skipNumber},  (err, categories) => {
         if(err) return res.status(400).json( {error: "Can not get categories"} )
         return res.status(200).json(categories)
     })

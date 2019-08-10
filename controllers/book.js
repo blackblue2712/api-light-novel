@@ -19,11 +19,10 @@ module.exports.addBook = (req, res) => {
 }
 
 module.exports.getBooks =  (req, res) => {
-    Book.find( {status: true} )
+    Book.find( {status: true}, null, {limit: 5, skip: 0, sort: {created: -1}} )
         .select("name status  price saleOff created")
         .populate("cateId", "name")
         .exec( (err, books) => {
-            console.log(err)
             if(!books || err) return res.status(400).json( {error: "Can not get all books"} )
             return res.status(200).json(books)
         })
@@ -45,6 +44,12 @@ module.exports.requestRelatedBookId = (req, res, next, id) => {
     
 }
 
-module.exports.getChapterOfBook = (req, res) => {
-
+module.exports.getMoreBooks = (req, res) => {
+    Book.find( {status: true}, null, {limit: 5, skip: req.body.skipNumber, sort: {created: -1}} )
+        .select("name status  price saleOff created")
+        .populate("cateId", "name")
+        .exec( (err, books) => {
+            if(!books || err) return res.status(400).json( {error: "Can not get all books"} )
+            return res.status(200).json(books)
+        })
 }

@@ -36,10 +36,12 @@ const bookSchema = new Schema({
         default: true
     },
     ordering: Number,
-    cateId: {
-        type: ObjectId,
-        ref: "Category"
-    },
+    cateId: [
+        {
+            type: ObjectId,
+            ref: "Category"
+        }
+    ],
     views: {
         type: Number,
         default: 0
