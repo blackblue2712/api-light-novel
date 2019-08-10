@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const express = require("express");
 const morgan = require('morgan')
 const expressValidator = require("express-validator");
+require('events').EventEmitter.prototype._maxListeners = 0;
 
 // Bring route from routes
 const indexRoute = require("./routes/index");

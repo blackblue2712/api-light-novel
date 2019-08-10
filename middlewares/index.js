@@ -50,6 +50,7 @@ module.exports.validateCreateGroupUser = (req, res, next) => {
 }
 
 module.exports.validateAddCategory = (req, res, next) => {
+    console.log(req.body)
     req.check("name", "Name of the category is required").notEmpty();
     // Check for error
     const errors = req.validationErrors();

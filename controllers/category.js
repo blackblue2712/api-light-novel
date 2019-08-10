@@ -16,10 +16,17 @@ module.exports.addCategory = (req, res) => {
         
             cate.save( (err, cate) => {
                 if(err) {
-                    return res.status(403).json("Error! Not Permission")
+                    return res.status(403).json( {error: "Error! Not Permission"} )
                 }
-                return res.status(400).json("Add new category successfully!");
+                return res.status(200).json( {message: "Add new category successfully!"} );
             })
         }
+    })
+}
+
+module.exports.getCategories = (req, res) => {
+    Category.find({status: true}, (err, categories) => {
+        if(err) return res.status(400).json( {error: "Can not get categories"} )
+        return res.status(200).json(categories)
     })
 }

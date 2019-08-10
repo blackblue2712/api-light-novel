@@ -13,7 +13,10 @@ const bookSchema = new Schema({
         type: Boolean,
         default: false
     },
-    saleOff: Number,
+    saleOff: {
+        type: Number,
+        default: 0
+    },
     picture: String,
     created: {
         type: Date,
