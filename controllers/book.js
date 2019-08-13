@@ -65,14 +65,13 @@ module.exports.getMoreBooks = (req, res) => {
 module.exports.postUpdateBook = (req, res) => {
     let form = formidable.IncomingForm();
     form.keepExtensions = true;
-	form.parse(req, (err, fields, files) => {
-        console.log(err, req.body, fields, files)
+	form.parse(req, async (err, fields, files) => {
 		if(err) {
 			return res.status(400).json( {error: "Photo could not be uploaded file"} );
 		}
 		// save book
         let book = req.bookInfo;
-        let { name, description, price, saleOff, author, datePublished, status, special, cateId } = req.body;
+        let { name, description, price, saleOff, author, datePublished, status, special, cateId } = fields;
         book.name = name;
         book.description = description;
         book.price = price;
@@ -88,14 +87,14 @@ module.exports.postUpdateBook = (req, res) => {
                 const fileName = book.photo.split(".")[post.photo.split(".").length - 2];
                 cloudinary.v2.uploader.destroy(fileName);
             }
-            cloudinary.v2.uploader.upload(files.photo.path, function(error, result) {
+            await cloudinary.v2.uploader.upload(files.photo.path, function(error, result) {
                 book.photo = result.secure_url;
                 }).then( () => {
                     book.save( (err, result) => {
                         if(err) {
                             return res.status(403).json( {message: "Error! Not Permission"} )
                         }
-                        return res.status(200).json( {message: `Book ${name} updated!`} );
+                        return res.status(200).json( {message: `Book ${book.name} updated!`} );
                     })
                 })
         }
