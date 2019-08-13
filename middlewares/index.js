@@ -28,6 +28,35 @@ module.exports.validateSignupUser = (req, res, next) => {
     next();
 }
 
+module.exports.validateUpdateUser = (req, res, next) => {
+    req.check("username", "Username is required").notEmpty();
+    req.check("email", "Email is required").notEmpty();
+    req.check("email")
+        .matches(/.+\@.+\..+/)
+        .withMessage("Invalid email")
+    
+    // req.check("password", "Password is required").notEmpty();
+    // req.check("password")
+    //     .matches(/\d/)
+    //     .withMessage("Password must has a number")
+    //     .isLength( {min: 6} )
+    //     .withMessage("Paasword must contain at least 6 characters")
+
+
+    // Check for error
+    const errors = req.validationErrors();
+    // If error show the first one as they happen
+    if(errors) {
+        const firstError = errors[0].msg;
+        return res.status(400).json({
+            message: firstError
+        })
+    }
+
+    // Process to the next middleware
+    next();
+}
+
 module.exports.validateCreateGroupUser = (req, res, next) => {
     req.check("name", "Name of the group is required").notEmpty();
     req.check("groupACP", "Group access control is required").notEmpty();

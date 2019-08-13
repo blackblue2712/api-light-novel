@@ -78,3 +78,49 @@ module.exports.postSignout = (req, res) => {
     req.payload = undefined;
     return res.json( {message: 'Signout success'} )
 }
+
+module.exports.getUsers =  (req, res) => {
+    User.find( {status: true}, null, {limit: 5, skip: 0, sort: {created: -1}} )
+        .select("_id username email fullname status")
+        .populate("groupId", "_id name groupACP description")
+        .exec( (err, users) => {
+            if(!users || err) return res.status(400).json( {error: "Can not get all users"} )
+            return res.status(200).json(users)
+        })
+}
+
+
+module.exports.getMoreUsers = (req, res) => {
+    User.find( {status: true}, null, {limit: 5, skip: req.body.skipNumber, sort: {created: -1}} )
+        .select("_id username email fullname status")
+        .populate("groupId", "_id name groupACP description")
+        .exec( (err, users) => {
+            if(!users || err) return res.status(400).json( {error: "Can not get all users"} )
+            return res.status(200).json(users)
+        })
+}
+
+module.exports.getSingleUser = (req, res) => {
+    return res.status(200).json(req.userProfile);
+}
+
+module.exports.postUpdateUser = (req, res) => {
+    const { username, email, fullname, status, groupId, _id } = req.body;
+    
+    User.findById( _id, (err, user) => {
+        if(!user || err) {
+            res.status(400).json( {message: "User not found!"} )
+        } else {
+            user.username = username;
+            user.email = email;
+            user.fullname = fullname;
+            user.status = status;
+            user.groupId = groupId;
+            user.save( (err, obj) => {
+                if(err) return res.status(400).json( {message: err} )
+                return res.status(200).json( {message: "User updated"} )
+            })
+        }
+    })
+
+}
