@@ -42,7 +42,7 @@ module.exports.getSingleBook = (req, res) => {
 
 module.exports.requestRelatedBookId = (req, res, next, id) => {
     Book.findById(id)
-        .select("_id name description author price saleOff status special datePublished created views")
+        .select("_id name description author price saleOff status special datePublished created views picture")
         .populate("cateId", "_id name description created")
         .exec( (err, book) => {
             if(err || !book) return res.status(400).json( {error: `Can not get book with id ${id} !`})
@@ -65,7 +65,7 @@ module.exports.getMoreBooks = (req, res) => {
 module.exports.postUpdateBook = (req, res) => {
     let form = formidable.IncomingForm();
     form.keepExtensions = true;
-	form.parse(req, async (err, fields, files) => {
+	form.parse(req, (err, fields, files) => {
 		if(err) {
 			return res.status(400).json( {error: "Photo could not be uploaded file"} );
 		}
@@ -80,30 +80,32 @@ module.exports.postUpdateBook = (req, res) => {
         book.datePublished= datePublished;
         book.status = status;
         book.special = special;
-        book.cateId = cateId;
-
+        book.cateId = cateId.split(",");
+        console.log(book.picture)
         if(files.photo) {
-            if(book.photo) {
-                const fileName = book.photo.split(".")[post.photo.split(".").length - 2];
+            if(book.picture) {
+                const fileName = book.picture.split("/")[book.picture.split("/").length - 1].split(".")[0];
+                console.log(fileName)
                 cloudinary.v2.uploader.destroy(fileName);
             }
-            await cloudinary.v2.uploader.upload(files.photo.path, function(error, result) {
-                book.photo = result.secure_url;
+            cloudinary.v2.uploader.upload(files.photo.path, function(error, result) {
+                book.picture = result.secure_url;
                 }).then( () => {
                     book.save( (err, result) => {
                         if(err) {
-                            return res.status(403).json( {message: "Error! Not Permission"} )
+                            return res.status(400).json( {message: "Error occur. Please try again"} )
                         }
                         return res.status(200).json( {message: `Book ${book.name} updated!`} );
                     })
                 })
+        } else {
+            book.save( (err, result) => {
+                if(err) {
+                    return res.status(400).json( {message: "Error occur. Please try again"} )
+                }
+                return res.status(200).json( {message: `Book ${name} updated!`} );
+            })
         }
 
-        book.save( (err, result) => {
-            if(err) {
-                return res.status(403).json( {message: "Error! Not Permission"} )
-            }
-            return res.status(200).json( {message: `Book ${name} updated!`} );
-        })
     });
 }
