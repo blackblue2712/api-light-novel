@@ -121,7 +121,6 @@ module.exports.deleteBook = async (req, res) => {
         .exec( (err, ids) => {
             if(ids) {
                 ids = ids.map( id => id._id);
-                console.log(ids);
                 Chapter.deleteMany( {_id: {'$in': ids}}, (err, result) => {
                     if(err) return status(400).json( {message: "Can not delete chapter of the book!"} );
                     req.deletedCount = result.deletedCount;
@@ -131,10 +130,8 @@ module.exports.deleteBook = async (req, res) => {
         
     if(book.picture) {
         const fileName = book.picture.split("/")[book.picture.split("/").length - 1].split(".")[0];
-        console.log(fileName);
         await cloudinary.v2.uploader.destroy(fileName);
         await Book.findByIdAndDelete(bookId, (err, result) => {
-            console.log(err, result)
             if(err) return res.status(400).json( {message: "Can not delete the book"} );
         }) 
         return res.status(200).json( {message: `The book ${book.name} was deleted`});

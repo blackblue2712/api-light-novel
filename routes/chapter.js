@@ -6,7 +6,8 @@ const {
     requestRelatedBookIdToGetChapters,
     getChapters,
     getSingleChapter,
-    requestRelatedChapterId
+    requestRelatedChapterId,
+    deleteChapter
 } = require("../controllers/chapter");
 const { crawlChapter, getContentFromCrawlLink } = require("../controllers/crawl");
 const { requireSignin, requestRelatedUserId, isAdmin } = require("../controllers/user");
@@ -15,6 +16,7 @@ const { requireSignin, requestRelatedUserId, isAdmin } = require("../controllers
 router.post("/create/crawl-links", crawlChapter);
 router.post("/create/crawl-data", getContentFromCrawlLink);
 router.post("/create/:userId", requireSignin, isAdmin, addChapter);
+router.delete("/delete/:chapterId", requireSignin, deleteChapter);
 
 router.get("/get/:bookId", getChapters);
 router.get("/:chapterId", getSingleChapter);

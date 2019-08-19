@@ -27,7 +27,6 @@ module.exports.requestRelatedBookIdToGetChapters = (req, res, next, id) => {
             req.chapters = chapters;
             next();
         })
-    
 }
 
 module.exports.getChapters = (req, res) => {
@@ -48,4 +47,13 @@ module.exports.requestRelatedChapterId = (req, res, next, id) => {
 
 module.exports.getSingleChapter = (req, res) => {
     return res.status(200).json( req.chapter )
+}
+
+module.exports.deleteChapter = (req, res) => {
+    const chapterId = req.chapter._id;
+    Chapter.findByIdAndDelete(chapterId, (err, result) => {
+        console.log(err, result);
+        if(err) return res.status(400).json( {message: "Can not delete this chapter"} )
+        return res.status(200).json( {message: `Chapter ${req.chapter.chapterNumber} was rsdeleted`})
+    })
 }
