@@ -1,5 +1,6 @@
 
 const Book = require('../models/Book');
+const Chapter = require("../models/Chapter");
 const formidable = require("formidable");
 const cloudinary = require('cloudinary');
 cloudinary.config({ 
@@ -40,8 +41,8 @@ module.exports.getSingleBook = (req, res) => {
     return res.json(req.bookInfo);
 }
 
-module.exports.requestRelatedBookId = (req, res, next, id) => {
-    Book.findById(id)
+module.exports.requestRelatedBookId = async (req, res, next, id) => {
+    await Book.findById(id)
         .select("_id name description author price saleOff status special datePublished created views picture")
         .populate("cateId", "_id name description created")
         .exec( (err, book) => {
@@ -65,6 +66,7 @@ module.exports.getMoreBooks = (req, res) => {
 module.exports.postUpdateBook = (req, res) => {
     let form = formidable.IncomingForm();
     form.keepExtensions = true;
+
 	form.parse(req, (err, fields, files) => {
 		if(err) {
 			return res.status(400).json( {error: "Photo could not be uploaded file"} );
@@ -109,3 +111,33 @@ module.exports.postUpdateBook = (req, res) => {
 
     });
 }
+
+
+module.exports.deleteBook = async (req, res) => {
+    const book = req.bookInfo;
+    const bookId = book._id;
+    Chapter.find( {bookId} )
+        .select("_id")
+        .exec( (err, ids) => {
+            if(ids) {
+                ids = ids.map( id => id._id);
+                console.log(ids);
+                Chapter.deleteMany( {_id: {'$in': ids}}, (err, result) => {
+                    if(err) return status(400).json( {message: "Can not delete chapter of the book!"} );
+                    req.deletedCount = result.deletedCount;
+                })
+            }
+        })
+        
+    if(book.picture) {
+        const fileName = book.picture.split("/")[book.picture.split("/").length - 1].split(".")[0];
+        console.log(fileName);
+        await cloudinary.v2.uploader.destroy(fileName);
+        await Book.findByIdAndDelete(bookId, (err, result) => {
+            console.log(err, result)
+            if(err) return res.status(400).json( {message: "Can not delete the book"} );
+        }) 
+        return res.status(200).json( {message: `The book ${book.name} was deleted`});
+    }
+    return res.status(200).json( {message: `The book ${book.name} was deleted`});
+} 

@@ -8,7 +8,8 @@ const {
     getSingleBook,
     requestRelatedBookId,
     getMoreBooks,
-    postUpdateBook
+    postUpdateBook,
+    deleteBook
 } = require("../controllers/book");
 const { requireSignin, requestRelatedUserId, isAdmin } = require("../controllers/user");
 const { validateAddBook } = require("../middlewares/index");
@@ -20,6 +21,7 @@ router.get("/:bookId", getSingleBook);
 
 // Update
 router.post("/update/:bookId", postUpdateBook);
+router.delete("/delete/:bookId", deleteBook);
 
 router.param("userId", requestRelatedUserId);
 router.param("bookId", requestRelatedBookId);
