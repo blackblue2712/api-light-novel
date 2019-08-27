@@ -9,9 +9,10 @@ const {
     getMoreUsers,
     requestRelatedUserId,
     getSingleUser,
-    postUpdateUser
+    postUpdateUser,
+    postUpdatePasswordUser
 } = require("../controllers/user");
-const { validateSignupUser, validateUpdateUser } = require("../middlewares/index");
+const { validateSignupUser, validateUpdateUser, validatePasswordUser } = require("../middlewares/index");
 
 router.get("/get/all", getUsers);
 router.post("/get/more", getMoreUsers);
@@ -20,7 +21,8 @@ router.post("/signin", postSignin);
 router.post("/signout", postSignout);
 
 // Update
-router.post("/update", validateUpdateUser, postUpdateUser);
+router.post("/update", postUpdateUser);
+router.post("/update-password/:userId", validatePasswordUser, postUpdatePasswordUser);
 
 // Single
 router.get("/get/:userId", getSingleUser);

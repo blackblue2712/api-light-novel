@@ -128,3 +128,25 @@ module.exports.validateAddChapter = (req, res, next) => {
     // Process to the next middleware
     next();
 }
+
+module.exports.validatePasswordUser = (req, res, next) => {
+    console.log(req.body)
+    req.check("password", "Password is required").notEmpty();
+    req.check("password")
+        .matches(/\d/)
+        .withMessage("Password must has at least a number")
+        .isLength( {min: 6} )
+        .withMessage("Password must contain at least 6 characters");
+
+    const errors = req.validationErrors();
+    if(errors) {
+        const firstError = errors[0].msg;
+        return res.status(400).json( {
+            error: firstError
+        })
+    }
+
+    // Process to the next middleware
+    next();
+    
+}
